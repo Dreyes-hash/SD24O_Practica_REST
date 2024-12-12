@@ -7,6 +7,7 @@ import uuid
 import orm.repo as repo
 from sqlalchemy.orm import Session
 from orm.config import generador_sesion
+import orm.esquemas as esquemas
 
 app = FastAPI()
 
@@ -83,6 +84,41 @@ def borrar_alumno_byID(id_alumno:int, session:Session = Depends(generador_sesion
     print("borrando alumno por id: ", id_alumno)
     return repo.del_alumnos_byID(session,id_alumno)
 
+#agregar un alumno
+@app.post("/alumnos")
+def agregar_alumno(info_alumno: esquemas.AlumnoBase, session:Session = Depends(generador_sesion)):
+    print("agregando nuevo alumno: ", info_alumno)
+    return repo.add_alumno(session, info_alumno)
+
+#atualiza un alumno por id
+@app.put("/alumnos/{id}")
+def actualizar_alumnos(id_alumno:int, info_alumno: esquemas.AlumnoBase, session:Session = Depends(generador_sesion)):
+    print("actualizando alumno con id:", id_alumno)
+    return repo.upd_alumno(session, info_alumno, id_alumno)
+
+#agrega una calificacion a un alumno
+@app.post("/alumnos{id}/calificaciones")
+def agregar_calificacion(id_alumno:int, info_calificacion: esquemas.CalificacionBase,session:Session = Depends(generador_sesion)):
+    print("agregando nueva calificacio al alumno con id: ", id_alumno)
+    return repo.add_calificacion_alumno(session,info_calificacion,id_alumno)
+
+#actualiza una calificacion por id
+@app.put("/calificacion/{id}")
+def actualizar_calificacion(id_calificacion:int, info_calificacion: esquemas.CalificacionBase, session:Session = Depends(generador_sesion)):
+    print("actualizando calificacion con id: ", id_calificacion)
+    return repo.upd_calificacion(session,info_calificacion,id_calificacion)
+
+#agrega una foto a un alumno
+@app.post("/alumnos/{id}/fotos")
+def agregar_foto_alumno(id_alumno:int, info_foto:esquemas.FotoBase,session:Session = Depends(generador_sesion)):
+    print("agregando foto:", info_foto)
+    return repo.add_foto_alumno(session, info_foto, id_alumno)
+
+#actualiza una foto
+@app.put("/fotos/{id}")
+def actualizar_foto(id_foto:int, info_foto:esquemas.FotoBase, session:Session = Depends(generador_sesion)):
+    print("actualizando foto con id: ", id_foto)
+    return repo.upd_foto(session, info_foto, id_foto)
 
 
 

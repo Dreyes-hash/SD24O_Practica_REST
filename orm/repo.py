@@ -1,5 +1,6 @@
 import orm.modelos as modelos 
 from sqlalchemy.orm import Session
+import orm.esquemas as esquemas
 
 #genera la siguiente solicitud SQL al servidor 
 #SELECT * FROM app.alumnos
@@ -116,3 +117,110 @@ def del_calificacion_byID(session: Session, id_calificacion:int):
             "mensaje" : "calificacion eliminada"
         }
     return respuesta
+
+#nuevo alumno
+def add_alumno(session:Session, nuevo_alumno: esquemas.AlumnoBase):
+    alumno_bd = modelos.Alumno(
+        nombre = nuevo_alumno.nombre,
+        edad = nuevo_alumno.edad,
+        domicilio = nuevo_alumno.domicilio,
+        carrera = nuevo_alumno.carrera,
+        trimestre = nuevo_alumno.trimestre,
+        email = nuevo_alumno.email,
+        password = nuevo_alumno.password
+    )
+    session.add(alumno_bd)
+    session.commit()
+    session.refresh(alumno_bd)
+    return alumno_bd
+
+#actualiza alumno
+def upd_alumno(session:Session, info_alumno: esquemas.AlumnoBase, id_alumno:int):
+    alumno_bd = find_alumno_biID(session, id_alumno)
+    if alumno_bd is not None:
+        alumno_bd.nombre = info_alumno.nombre
+        alumno_bd.edad = info_alumno.edad
+        alumno_bd.carrera = info_alumno.carrera
+        alumno_bd.domicilio = info_alumno.domicilio
+        alumno_bd.email = info_alumno.email
+        alumno_bd.password = info_alumno.password
+        alumno_bd.trimestre = info_alumno.trimestre
+        session.commit()
+        session.refresh(alumno_bd)
+        return info_alumno
+    else:
+        respuesta = {
+            "mensaje" : "el alumno no existe"
+        }
+        return respuesta
+    
+#nueva calificacion    
+def add_calificacion_alumno(session:Session, nueva_calificacion: esquemas.CalificacionBase, id_alumno:int):
+    alumno_bd = find_alumno_biID(session, id_alumno)
+    if alumno_bd is not None:
+        calificacion_bd = modelos.Calificacion(
+            id_alumno = alumno_bd.id,
+            uea = nueva_calificacion.uea,
+            calificacion = nueva_calificacion.calificacion
+        )
+        session.add(calificacion_bd)
+        session.commit()
+        session.refresh(calificacion_bd)
+        return calificacion_bd
+    else:
+        respuesta = {
+            "mensaje" : "el id de alumno no existe"
+        }
+        return respuesta
+    
+#actualiza calificacion
+def upd_calificacion(session:Session, info_calificacion:esquemas.CalificacionBase, id_calificacion:int):
+    calificacion_bd = find_calificacion_byID(session,id_calificacion)
+    if calificacion_bd is not None:
+        calificacion_bd.uea = info_calificacion.uea,
+        calificacion_bd.calificacion = info_calificacion.calificacion
+        session.commit()
+        session.refresh(calificacion_bd)
+        return info_calificacion
+    else:
+        respuesta = {
+            "mensaje" : "la calificacion no existe"
+        }
+        return respuesta
+
+#nueva foto
+def add_foto_alumno(session:Session, info_foto:esquemas.FotoBase, id_alumno:int):
+    alumno = find_alumno_biID(session, id_alumno)
+    if alumno is not None:
+        foto_bd = modelos.Foto(
+            id_alumno = alumno.id,
+            titulo = info_foto.titulo,
+            descripcion = info_foto.descripcion,
+            ruta = info_foto.ruta
+        )
+        session.add(foto_bd)
+        session.commit()
+        session.refresh(foto_bd)
+        return foto_bd
+    else:
+        respuesta = {
+            "mensaje" : "el id de alumno no existe"
+        }
+        return respuesta
+    
+#actualiza foto    
+def upd_foto(session:Session, info_foto:esquemas.FotoBase, id_foto:int):
+    foto_bd = find_foto_byID(session,id_foto)
+    if foto_bd is not None:
+        foto_bd.ruta = info_foto.ruta,
+        foto_bd.titulo = info_foto.titulo,
+        foto_bd.descripcion = info_foto.descripcion
+        session.commit()
+        session.refresh(foto_bd)
+        return info_foto
+    else:
+        respuesta = {
+            "mensaje" : "el id de la foto no existe"
+        }
+        return respuesta
+
