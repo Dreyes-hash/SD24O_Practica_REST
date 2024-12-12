@@ -1,9 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form, Depends
-from typing import Optional
-from pydantic import BaseModel
-import shutil
-import os
-import uuid
+from fastapi import FastAPI, Depends
 import orm.repo as repo
 from sqlalchemy.orm import Session
 from orm.config import generador_sesion
